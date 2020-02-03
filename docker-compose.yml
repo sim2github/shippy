@@ -1,6 +1,11 @@
 version: '3.1'
 
 services:
+  micro:
+    image: micro/micro:latest
+    ports:
+      - "8080:8080"
+      - "8082:8082"
 
   consignment-cli:
     build: ./consignment-cli
@@ -54,3 +59,13 @@ services:
     image: postgres
     ports:
       - 5432:5432
+
+  dbadmin:
+    image: adminer:latest
+    environment:
+      ADMINER_DEFAULT_SERVER: "database"
+    depends_on:
+      - "database"
+    ports:
+      - "8700:8080"
+
