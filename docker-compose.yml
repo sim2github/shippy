@@ -1,47 +1,43 @@
 version: '3.1'
 
 services:
-  micro:
+  micro-proxy:
     image: micro/micro:latest
+    command: proxy
+    environment:
+      MICRO_SERVER_ADDRESS: ":9090"
     ports:
-      - "8080:8080"
-      - "8082:8082"
-
-  consignment-cli:
-    build: ./consignment-cli
-    environment:
-      MICRO_REGISTRY: "mdns"
-
-  user-cli:
-    build: ./user-cli
-    environment:
-      MICRO_REGISTRY: "mdns"
+      - 9090:9090
+  micro-web:
+    image: micro/micro:latest
+    command: web
+    ports:
+      - 8082:8082
+  micro-api:
+    image: micro/micro:latest
+    command: api
+    ports:
+      - 8080:8080
 
   consignment-service:
-    build: ./consignment-service
-    ports:
-      - 50051:50051
+    build: ./srv/consignment
     environment:
-      MICRO_ADDRESS: ":50051"
-      MICRO_REGISTRY: "mdns"
+      MICRO_SERVER_ADDRESS: ":50501"
+      MICRO_LOG_LEVEL: "debug"
       DB_HOST: "datastore:27017"
-
-  vessel-service:
-    build: ./vessel-service
     ports:
-      - 50052:50051
+      - 50501
+  
+  vessel-service:
+    build: ./srv/vessel
     environment:
-      MICRO_ADDRESS: ":50051"
-      MICRO_REGISTRY: "mdns"
+      MICRO_LOG_LEVEL: "debug"
       DB_HOST: "datastore:27017"
 
   user-service:
-    build: ./user-service
-    ports:
-      - 50053:50051
+    build: ./srv/user
     environment:
-      MICRO_ADDRESS: ":50051"
-      MICRO_REGISTRY: "mdns"
+      MICRO_LOG_LEVEL: "debug"
       DB_NAME: "postgres"
       DB_HOST: "database"
       DB_PORT: "5432"
@@ -52,6 +48,9 @@ services:
 
   datastore:
     image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - 27017:27017
 
@@ -60,12 +59,11 @@ services:
     ports:
       - 5432:5432
 
-  dbadmin:
-    image: adminer:latest
-    environment:
-      ADMINER_DEFAULT_SERVER: "database"
+  adminer:
+    image: dockette/adminer:full
     depends_on:
-      - "database"
+      - datastore
+      - database
     ports:
-      - "8700:8080"
+      - 8700:80
 

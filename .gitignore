@@ -1,1 +1,6 @@
 .idea
+api/*/*-api
+srv/*/*-srv
+web/*/*-web
+fnc/*/*-fnc
+web/www/**/node_modules

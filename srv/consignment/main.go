@@ -9,15 +9,16 @@ import (
 
 	"os"
 
-	"golang.org/x/net/context"
+	"context"
 
-	pb "github.com/EwanValentine/shippy/consignment-service/proto/consignment"
-	userService "github.com/EwanValentine/shippy/user-service/proto/user"
-	vesselProto "github.com/EwanValentine/shippy/vessel-service/proto/vessel"
-	"github.com/micro/go-micro"
-	"github.com/micro/go-micro/client"
-	"github.com/micro/go-micro/metadata"
-	"github.com/micro/go-micro/server"
+	pb "github.com/EwanValentine/shippy/srv/consignment/proto/consignment"
+
+	userService "github.com/EwanValentine/shippy/srv/user/proto/user"
+	vesselProto "github.com/EwanValentine/shippy/srv/vessel/proto/vessel"
+	"github.com/micro/go-micro/v2"
+	"github.com/micro/go-micro/v2/client"
+	"github.com/micro/go-micro/v2/metadata"
+	"github.com/micro/go-micro/v2/server"
 )
 
 const (
@@ -55,7 +56,7 @@ func main() {
 		micro.WrapHandler(AuthWrapper),
 	)
 
-	vesselClient := vesselProto.NewVesselServiceClient("go.micro.srv.vessel", srv.Client())
+	vesselClient := vesselProto.NewVesselService("go.micro.srv.vessel", srv.Client())
 
 	// Init will parse the command line flags.
 	srv.Init()
@@ -79,7 +80,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 		log.Println("Authenticating with token: ", token)
 
 		// Auth here
-		authClient := userService.NewUserServiceClient("go.micro.srv.user", client.DefaultClient)
+		authClient := userService.NewUserService("go.micro.srv.user", client.DefaultClient)
 		authResp, err := authClient.ValidateToken(ctx, &userService.Token{
 			Token: token,
 		})

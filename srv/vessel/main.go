@@ -6,8 +6,8 @@ import (
 
 	"os"
 
-	pb "github.com/EwanValentine/shippy/vessel-service/proto/vessel"
-	"github.com/micro/go-micro"
+	pb "github.com/EwanValentine/shippy/srv/vessel/proto/vessel"
+	"github.com/micro/go-micro/v2"
 )
 
 const (

@@ -45,8 +45,7 @@ build:
 	done
 
 run:
-	docker-compose build
-	docker-compose up
+	docker-compose up --build
 
 api: mod_check
 	@while [ -z "$$NAME" ]; do \
@@ -71,3 +70,11 @@ web: mod_check
 		read -r -p "Web service name: " NAME; \
 	done ; \
 	micro new $(MODULE)/web/$$NAME --namespace=$(MODULE_NAME) --type=web
+	
+user-over-api:
+	@curl 'http://localhost:8082/rpc' \
+		-H 'Content-type: application/json' \
+		-d '{"service":"go.micro.srv.user","endpoint":"UserService.Create","request":{"name":"Ewan Valentine","email":"ewan.valentine'$$RANDOM'@gmail.com","password":"test123"}}'
+
+user-over-grpc-client:
+	docker-compose exec user-service /user-srv --run_client

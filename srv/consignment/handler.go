@@ -3,9 +3,10 @@ package main
 import (
 	"log"
 
-	pb "github.com/EwanValentine/shippy/consignment-service/proto/consignment"
-	vesselProto "github.com/EwanValentine/shippy/vessel-service/proto/vessel"
-	"golang.org/x/net/context"
+	"context"
+
+	pb "github.com/EwanValentine/shippy/srv/consignment/proto/consignment"
+	vesselProto "github.com/EwanValentine/shippy/srv/vessel/proto/vessel"
 	"gopkg.in/mgo.v2"
 )
 
@@ -15,7 +16,7 @@ import (
 // to give you a better idea.
 type service struct {
 	session      *mgo.Session
-	vesselClient vesselProto.VesselServiceClient
+	vesselClient vesselProto.VesselService
 }
 
 func (s *service) GetRepo() Repository {
